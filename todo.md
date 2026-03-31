@@ -1,9 +1,8 @@
 [x] player
-[ ] Improve the audio reactivity /  respond differently to bass vs highs
-[ ] lights
+[x] Improve the audio reactivity /  respond differently to bass vs highs
 [ ] Add user track uploads
 [ ] styling player
-[ ]  Visual polish / composition / tweak material (bloom, stronger IBL, maybe a second small light)
+[ ] Visual polish / composition / tweak material (bloom, stronger IBL, maybe a second small light)
 
 Minimal player with a single built‑in track
 

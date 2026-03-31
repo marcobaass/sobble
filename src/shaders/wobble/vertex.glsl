@@ -8,7 +8,6 @@ uniform float uWarpStrength;
 uniform float uAudioLevel;
 uniform float uBassLevel;
 uniform float uMidLevel;
-uniform float uHighLevel;
 
 #include ../includes/simplexNoise4d.glsl
 
@@ -18,11 +17,14 @@ varying float vWobble;
 
 float getWobble(vec3 position)
 {
+    float warpTimeFreq = uWarpTimeFrequency * (0.5 + uMidLevel);
+    float mainTimeFreq = uTimeFrequency * (0.5 + uMidLevel);
+
     vec3 warpedPosition = position;
     warpedPosition += simplexNoise4d(
         vec4(
-            position * uWarpPositionFrequency,
-            uTime * uWarpTimeFrequency
+            position * warpTimeFreq,
+            uTime * mainTimeFreq * 0.01
         )
     ) * uWarpStrength  * uAudioLevel;
 
@@ -43,6 +45,9 @@ void main()
 
     // Wobble
     float wobble = getWobble(csm_Position);
+    float bassfactor = 0.3 + uBassLevel * 1.0;
+    wobble *= bassfactor;
+
     csm_Position += wobble * normal;
     positionA    += getWobble(positionA) * normal;
     positionB    += getWobble(positionB) * normal;
