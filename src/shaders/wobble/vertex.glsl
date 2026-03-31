@@ -6,6 +6,9 @@ uniform float uWarpPositionFrequency;
 uniform float uWarpTimeFrequency;
 uniform float uWarpStrength;
 uniform float uAudioLevel;
+uniform float uBassLevel;
+uniform float uMidLevel;
+uniform float uHighLevel;
 
 #include ../includes/simplexNoise4d.glsl
 

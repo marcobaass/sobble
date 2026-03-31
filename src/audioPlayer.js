@@ -78,3 +78,25 @@ export function getCurrentAudioLevel() {
     smoothedLevel = smoothedLevel + (level - smoothedLevel) * smoothing
     return smoothedLevel
 }
+
+export function getFrequencyBands() {
+    if (!isReady || !analyser || !dataArray) return { bass: 0, mid: 0, high: 0 }
+    analyser.getByteFrequencyData(dataArray)
+
+    const n = dataArray.length
+    const third = Math.floor(n/3)
+    const twoThirds = Math.floor(2*n/3)
+
+    const bassSlice = dataArray.slice(0, third)
+    const midSlice = dataArray.slice(third, twoThirds)
+    const highSlice = dataArray.slice(twoThirds, n)
+
+    const bass = bassSlice.reduce((acc, curr) => acc + curr, 0) / bassSlice.length
+    const mid = midSlice.reduce((acc, curr) => acc + curr, 0) / midSlice.length
+    const high = highSlice.reduce((acc, curr) => acc + curr, 0) / highSlice.length
+
+    const bassLevel = bass / 255
+    const midLevel = mid / 255
+    const highLevel = high / 255
+    return { bassLevel, midLevel, highLevel }
+}

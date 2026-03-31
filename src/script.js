@@ -10,10 +10,9 @@ import GUI from 'lil-gui'
 import wobbleVertexShader from './shaders/wobble/vertex.glsl'
 import wobbleFragmentShader from './shaders/wobble/fragment.glsl'
 
-import { initAudioPlayer, getCurrentAudioLevel } from './audioPlayer.js'
+import { initAudioPlayer, getCurrentAudioLevel, getFrequencyBands } from './audioPlayer.js'
 
 initAudioPlayer({})
-
 /**
  * Base
  */
@@ -64,7 +63,10 @@ const uniforms = {
     uWarpStrength: new THREE.Uniform(1.7),
     uColorA: new THREE.Uniform(new THREE.Color(debugObject.colorA)),
     uColorB: new THREE.Uniform(new THREE.Color(debugObject.colorB)),
-    uAudioLevel: new THREE.Uniform(0)
+    uAudioLevel: new THREE.Uniform(0),
+    uBassLevel: new THREE.Uniform(0),
+    uMidLevel: new THREE.Uniform(0),
+    uHighLevel: new THREE.Uniform(0),
 }
 
 const material = new CustomShaderMaterial({
@@ -210,6 +212,12 @@ const tick = () =>
 
     uniforms.uTimeFrequency.value = audioLevel * 0.1 + 0.5
     uniforms.uPositionFrequency.value = audioLevel * 1.5
+
+    const { bassLevel, midLevel, highLevel } = getFrequencyBands()
+    uniforms.uBassLevel.value = bassLevel
+    uniforms.uMidLevel.value = midLevel
+    uniforms.uHighLevel.value = highLevel
+
     // Update controls
     controls.update()
 
