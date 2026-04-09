@@ -14,9 +14,12 @@ export function initAudioPlayer(options) {
     const audioPlayer = document.querySelector('.audio-player')
     const playPauseButton = audioPlayer.querySelector('.play-pause')
     const progressBar = audioPlayer.querySelector('.progress-bar')
+    const trackUpload = audioPlayer.querySelector('.track-upload')
+    const trackName = audioPlayer.querySelector('.track-name')
 
     const audio = new Audio('music.mp3')
     audio.preload = 'auto'
+    let currentObjectUrl = null
 
     playPauseButton.addEventListener('click', async () => {
         if (audioContext.state === 'suspended') {
@@ -56,6 +59,38 @@ export function initAudioPlayer(options) {
             audio.currentTime = inputValue * audio.duration
         }
     })
+
+    trackUpload.addEventListener('change', async (event) => {
+        if (!event.target || !event.target.files || event.target.files.length === 0) return
+
+        const file = event.target.files[0]
+
+        if (!file) return
+
+        const nextObjectUrl = URL.createObjectURL(file)
+
+        if (currentObjectUrl) {
+            URL.revokeObjectURL(currentObjectUrl)
+        }
+
+        currentObjectUrl = nextObjectUrl
+        trackName.textContent = file.name
+        audio.src = currentObjectUrl
+        progressBar.value = 0
+
+        if (audioContext.state === 'suspended') {
+            await audioContext.resume()
+        }
+        
+        audio.play().then(() => {
+            playPauseButton.textContent = 'Pause'
+        }).catch(error => {
+            console.error('Error playing audio:', error)
+            playPauseButton.textContent = 'Play'
+        })
+    })
+
+
 }
 
 /**

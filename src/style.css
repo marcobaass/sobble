@@ -22,3 +22,7 @@ body
     position: relative;
     z-index: 1;
 }
+
+.track-name {
+    color: #fff;
+}
