@@ -16,11 +16,46 @@ export function initAudioPlayer(options) {
     const progressBar = audioPlayer.querySelector('.progress-bar')
     const trackUpload = audioPlayer.querySelector('.track-upload')
     const trackName = audioPlayer.querySelector('.track-name')
+    const nextTrackButton = audioPlayer.querySelector('.next-track')
+    const previousTrackButton = audioPlayer.querySelector('.previous-track')
 
+    
     const audio = new Audio('music.mp3')
     audio.preload = 'auto'
     let currentObjectUrl = null
+    const tracks = [{ name: 'music.mp3', url: 'music.mp3' }]
+    let currentTrackIndex = 0
 
+    function loadTrackAt(index) {
+        if (index < 0 || index >= tracks.length) return
+
+        if (currentObjectUrl) {
+            URL.revokeObjectURL(currentObjectUrl)
+        }
+
+        currentObjectUrl = null
+
+        const track = tracks[index]
+        if (!track) return
+
+        trackName.textContent = track.name
+        if (track.file) {
+            currentObjectUrl = URL.createObjectURL(track.file)
+            audio.src = currentObjectUrl
+        } else {
+            currentObjectUrl = null
+            audio.src = track.url
+        }
+        currentTrackIndex = index
+        progressBar.value = 0
+        audio.play().then(() => {
+            playPauseButton.textContent = 'Pause'
+        }).catch(error => {
+            console.error('Error playing audio:', error)
+            playPauseButton.textContent = 'Play'
+        })
+    }
+    
     playPauseButton.addEventListener('click', async () => {
         if (audioContext.state === 'suspended') {
             await audioContext.resume()
@@ -67,30 +102,31 @@ export function initAudioPlayer(options) {
 
         if (!file) return
 
-        const nextObjectUrl = URL.createObjectURL(file)
-
-        if (currentObjectUrl) {
-            URL.revokeObjectURL(currentObjectUrl)
-        }
-
-        currentObjectUrl = nextObjectUrl
-        trackName.textContent = file.name
-        audio.src = currentObjectUrl
-        progressBar.value = 0
+        tracks.push({ name: file.name, file })
 
         if (audioContext.state === 'suspended') {
             await audioContext.resume()
         }
+
+        loadTrackAt(tracks.length - 1)
         
-        audio.play().then(() => {
-            playPauseButton.textContent = 'Pause'
-        }).catch(error => {
-            console.error('Error playing audio:', error)
-            playPauseButton.textContent = 'Play'
-        })
     })
 
+    nextTrackButton.addEventListener('click', () => {
+        let nextIndex = currentTrackIndex
+        nextIndex++
+        nextIndex  = Math.min(nextIndex, tracks.length - 1)
+        if (nextIndex === currentTrackIndex) return
+        loadTrackAt(nextIndex)
+    })
 
+    previousTrackButton.addEventListener('click', () => {
+        let nextIndex = currentTrackIndex
+        nextIndex--
+        nextIndex  = Math.max(nextIndex, 0)
+        if (nextIndex === currentTrackIndex) return
+        loadTrackAt(nextIndex)
+    })    
 }
 
 /**

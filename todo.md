@@ -1,7 +1,8 @@
 [x] player
 [x] Improve the audio reactivity /  respond differently to bass vs highs
 [x] Add user track uploads
-[ ] Miniplaylist
+[x] Miniplaylist
+[ ] Miniplaylist visual imp.
 [ ] styling player
 [ ] Visual polish / composition / tweak material (bloom, stronger IBL, maybe a second small light)
 
