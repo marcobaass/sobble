@@ -26,3 +26,15 @@ body
 .track-name {
     color: #fff;
 }
+
+.playlist-container {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    color: #fff;
+}
+
+.is-playing {
+    font-weight: bold;
+    color: #00ff40a9;
+}

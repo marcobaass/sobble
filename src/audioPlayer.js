@@ -15,9 +15,9 @@ export function initAudioPlayer(options) {
     const playPauseButton = audioPlayer.querySelector('.play-pause')
     const progressBar = audioPlayer.querySelector('.progress-bar')
     const trackUpload = audioPlayer.querySelector('.track-upload')
-    const trackName = audioPlayer.querySelector('.track-name')
     const nextTrackButton = audioPlayer.querySelector('.next-track')
     const previousTrackButton = audioPlayer.querySelector('.previous-track')
+    const playlistList = audioPlayer.querySelector('.playlist-list')
 
     
     const audio = new Audio('music.mp3')
@@ -37,8 +37,7 @@ export function initAudioPlayer(options) {
 
         const track = tracks[index]
         if (!track) return
-
-        trackName.textContent = track.name
+        
         if (track.file) {
             currentObjectUrl = URL.createObjectURL(track.file)
             audio.src = currentObjectUrl
@@ -48,12 +47,26 @@ export function initAudioPlayer(options) {
         }
         currentTrackIndex = index
         progressBar.value = 0
-        audio.play().then(() => {
+
+
+        
+        return audio.play().then(() => {
+            updateNowPlaying(index)
             playPauseButton.textContent = 'Pause'
         }).catch(error => {
             console.error('Error playing audio:', error)
             playPauseButton.textContent = 'Play'
+            throw error
         })
+    }
+
+    function updateNowPlaying(index) {
+        const rows = playlistList.querySelectorAll('.playlist-item')
+        if (!rows[index]) return
+        rows.forEach(row => {
+            row.classList.remove('is-playing')
+        })
+        rows[index].classList.add('is-playing')
     }
     
     playPauseButton.addEventListener('click', async () => {
@@ -103,13 +116,23 @@ export function initAudioPlayer(options) {
         if (!file) return
 
         tracks.push({ name: file.name, file })
-
+        
+        const newTrack = document.createElement('li')
+        newTrack.textContent = file.name
+        newTrack.classList.add('playlist-item')  
+        playlistList.appendChild(newTrack)
+        
         if (audioContext.state === 'suspended') {
             await audioContext.resume()
         }
 
         loadTrackAt(tracks.length - 1)
-        
+        .catch(error => {
+            tracks.pop()
+            newTrack.remove()
+            console.error('Error loading track:', error)
+            throw error
+        })
     })
 
     nextTrackButton.addEventListener('click', () => {
