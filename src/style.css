@@ -34,6 +34,18 @@ body
     color: #fff;
 }
 
+.playlist-item {
+    cursor: pointer;
+    font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+    font-weight: bold;
+    transition: all 0.3s ease;
+}
+
+.playlist-item:hover {
+    color: #00ffff;
+    font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+}
+
 .is-playing {
     font-weight: bold;
     color: #00ff40a9;

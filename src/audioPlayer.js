@@ -18,6 +18,7 @@ export function initAudioPlayer(options) {
     const nextTrackButton = audioPlayer.querySelector('.next-track')
     const previousTrackButton = audioPlayer.querySelector('.previous-track')
     const playlistList = audioPlayer.querySelector('.playlist-list')
+    const playlistItems = playlistList.querySelectorAll('.playlist-item')
 
     
     const audio = new Audio('music.mp3')
@@ -149,7 +150,22 @@ export function initAudioPlayer(options) {
         nextIndex  = Math.max(nextIndex, 0)
         if (nextIndex === currentTrackIndex) return
         loadTrackAt(nextIndex)
-    })    
+    })
+    
+    playlistList.addEventListener('click', (async (event) => {
+        const playlistItem = event.target.closest('.playlist-item')
+        if (!playlistItem || !playlistList.contains(playlistItem)) return
+
+        const playlistItems = playlistList.querySelectorAll('.playlist-item')
+        const clickedIndex = Array.from(playlistItems).indexOf(playlistItem)
+        if (clickedIndex === -1) return
+        if (clickedIndex === currentTrackIndex) return
+        if (audioContext.state === 'suspended') await audioContext.resume()
+        loadTrackAt(clickedIndex).catch(error => {
+            console.error('Error loading track:', error)
+            throw error
+        })
+    }))
 }
 
 /**

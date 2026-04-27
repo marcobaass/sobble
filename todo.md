@@ -3,7 +3,7 @@
 [x] Add user track uploads
 [x] Miniplaylist
 [x] Miniplaylist visual imp.
-[ ] add click handler to each track
+[x] add click handler to each track
 [ ] styling player
 [ ] Visual polish / composition / tweak material (bloom, stronger IBL, maybe a second small light)
 
