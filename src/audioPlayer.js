@@ -13,7 +13,9 @@ let isReady = false
 export function initAudioPlayer(options) {
     const audioPlayer = document.querySelector('.audio-player')
     const playPauseButton = audioPlayer.querySelector('.play-pause')
-    const progressBar = audioPlayer.querySelector('.progress-bar')
+    const stopButton = audioPlayer.querySelector('.stop')
+    const progressBarContainer = audioPlayer.querySelector('.progress-bar-container')
+    const progressBar = progressBarContainer.querySelector('.progress-bar')
     const trackUpload = audioPlayer.querySelector('.track-upload')
     const nextTrackButton = audioPlayer.querySelector('.next-track')
     const previousTrackButton = audioPlayer.querySelector('.previous-track')
@@ -47,16 +49,16 @@ export function initAudioPlayer(options) {
             audio.src = track.url
         }
         currentTrackIndex = index
-        progressBar.value = 0
+        progressBarContainer.value = 0
 
 
         
         return audio.play().then(() => {
             updateNowPlaying(index)
-            playPauseButton.textContent = 'Pause'
+            playPauseButton.innerHTML = '&#9646;&#9646;'
         }).catch(error => {
             console.error('Error playing audio:', error)
-            playPauseButton.textContent = 'Play'
+            playPauseButton.innerHTML = '&#9654;'
             throw error
         })
     }
@@ -78,10 +80,10 @@ export function initAudioPlayer(options) {
         if (audio.paused) {
             console.log('playing', audioContext.state)
             audio.play()
-            playPauseButton.textContent = 'Pause'
+            playPauseButton.innerHTML = '&#9646;&#9646;'
         } else {
             audio.pause()
-            playPauseButton.textContent = 'Play'
+            playPauseButton.innerHTML = '&#9654;'
         }
     })
 
@@ -100,6 +102,13 @@ export function initAudioPlayer(options) {
         if (audio.duration) {
             progressBar.value = audio.currentTime / audio.duration
         }
+    })
+
+    stopButton.addEventListener('click', () => {	
+        audio.pause()
+        audio.currentTime = 0
+        progressBar.value = 0
+        playPauseButton.innerHTML = '&#9654;'
     })
 
     progressBar.addEventListener('input', () => {

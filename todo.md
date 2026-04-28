@@ -4,6 +4,7 @@
 [x] Miniplaylist
 [x] Miniplaylist visual imp.
 [x] add click handler to each track
+[ ] Stop and delete track buttons
 [ ] styling player
 [ ] Visual polish / composition / tweak material (bloom, stronger IBL, maybe a second small light)
 
