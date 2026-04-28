@@ -12,6 +12,8 @@ import wobbleFragmentShader from './shaders/wobble/fragment.glsl'
 
 import { initAudioPlayer, getCurrentAudioLevel, getFrequencyBands } from './audioPlayer.js'
 
+
+
 initAudioPlayer({})
 /**
  * Base
@@ -27,11 +29,18 @@ const canvas = document.querySelector('canvas.webgl')
 const scene = new THREE.Scene()
 
 // Loaders
-const rgbeLoader = new RGBELoader()
+const loadingManager = new THREE.LoadingManager()
+const loader = document.querySelector('.loader')
+
+const rgbeLoader = new RGBELoader(loadingManager)
 const dracoLoader = new DRACOLoader()
 dracoLoader.setDecoderPath('./draco/')
-const gltfLoader = new GLTFLoader()
+const gltfLoader = new GLTFLoader(loadingManager)
 gltfLoader.setDRACOLoader(dracoLoader)
+
+loadingManager.onLoad = () => {
+    loader.style.display = 'none'
+}
 
 /**
  * Environment map
@@ -155,7 +164,7 @@ let lookAtY = 0
 const applyCameraLayout = () => {
     // Portrait layout
     if (sizes.width < sizes.height) {
-        camera.fov = 50;
+        camera.fov = 55;
         camera.position.set(13, - 3, - 5)
         lookAtY = 1.5;
         camera.updateProjectionMatrix()

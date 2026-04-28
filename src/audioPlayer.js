@@ -21,6 +21,7 @@ export function initAudioPlayer(options) {
     const previousTrackButton = audioPlayer.querySelector('.previous-track')
     const playlistList = audioPlayer.querySelector('.playlist-list')
     const playlistItems = playlistList.querySelectorAll('.playlist-item')
+    const deleteTrackButtons = playlistList.querySelectorAll('.delete-track')
 
     
     const audio = new Audio('music.mp3')
@@ -73,6 +74,7 @@ export function initAudioPlayer(options) {
     }
     
     playPauseButton.addEventListener('click', async () => {
+        if (tracks.length === 0) return
         if (audioContext.state === 'suspended') {
             await audioContext.resume()
         }
@@ -129,9 +131,10 @@ export function initAudioPlayer(options) {
         
         const newTrack = document.createElement('li')
         newTrack.textContent = file.name
-        newTrack.classList.add('playlist-item')  
+        newTrack.classList.add('playlist-item')
+        newTrack.innerHTML += `<button class="delete-track">x</button>`
         playlistList.appendChild(newTrack)
-        
+
         if (audioContext.state === 'suspended') {
             await audioContext.resume()
         }
@@ -161,12 +164,54 @@ export function initAudioPlayer(options) {
         loadTrackAt(nextIndex)
     })
     
-    playlistList.addEventListener('click', (async (event) => {
+    playlistList.addEventListener('click', (async (event) => {       
         const playlistItem = event.target.closest('.playlist-item')
-        if (!playlistItem || !playlistList.contains(playlistItem)) return
-
         const playlistItems = playlistList.querySelectorAll('.playlist-item')
         const clickedIndex = Array.from(playlistItems).indexOf(playlistItem)
+        const deleteButton = event.target.closest('.delete-track')
+
+        if (deleteButton) {
+            const trackToDelete = event.target.closest('.playlist-item')
+            if (!trackToDelete) return
+            const deletedIndex = Array.from(playlistItems).indexOf(trackToDelete)
+            if (deletedIndex === -1) return
+
+            tracks.splice(deletedIndex, 1)
+            trackToDelete.remove()
+            if (tracks.length === 0) {
+                audio.pause()
+                audio.currentTime = 0
+                progressBar.value = 0
+                playPauseButton.innerHTML = '&#9654;'
+                const playlistItems = playlistList.querySelectorAll('.playlist-item')
+                playlistItems.forEach(item => {
+                    item.classList.remove('is-playing')
+                })
+                currentTrackIndex = -1
+                return
+            }
+            if (deletedIndex === currentTrackIndex) {
+                audio.pause()
+                audio.currentTime = 0
+                progressBar.value = 0
+                playPauseButton.innerHTML = '&#9654;'
+                const playlistItems = playlistList.querySelectorAll('.playlist-item')
+                playlistItems.forEach(item => {
+                    item.classList.remove('is-playing')
+                })
+                currentTrackIndex = Math.min(deletedIndex, tracks.length - 1)
+                loadTrackAt(currentTrackIndex)
+                audio.pause()
+                playPauseButton.innerHTML = '&#9654;'
+            } else {
+                if (deletedIndex < currentTrackIndex) {
+                    currentTrackIndex--
+                }                
+            }
+            return
+        }
+        if (!playlistItem || !playlistList.contains(playlistItem)) return
+
         if (clickedIndex === -1) return
         if (clickedIndex === currentTrackIndex) return
         if (audioContext.state === 'suspended') await audioContext.resume()
