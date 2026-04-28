@@ -33,6 +33,11 @@ body
     display: flex;
     justify-content: center;
     align-items: center;
+    opacity: 1;
+    transition: opacity 250ms ease-in-out;
+}
+.loader.fade-out {
+    opacity: 0;
 }
 
 .loader img {

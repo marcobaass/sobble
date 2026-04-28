@@ -2,8 +2,8 @@ import * as THREE from 'three'
 import { mergeVertices } from 'three/addons/utils/BufferGeometryUtils.js'
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js'
 import { RGBELoader } from 'three/addons/loaders/RGBELoader.js'
-import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js'
-import { DRACOLoader } from 'three/addons/loaders/DRACOLoader.js'
+// import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js'
+// import { DRACOLoader } from 'three/addons/loaders/DRACOLoader.js'
 import CustomShaderMaterial from 'three-custom-shader-material/vanilla'
 import GUI from 'lil-gui'
 
@@ -33,13 +33,15 @@ const loadingManager = new THREE.LoadingManager()
 const loader = document.querySelector('.loader')
 
 const rgbeLoader = new RGBELoader(loadingManager)
-const dracoLoader = new DRACOLoader()
-dracoLoader.setDecoderPath('./draco/')
-const gltfLoader = new GLTFLoader(loadingManager)
-gltfLoader.setDRACOLoader(dracoLoader)
+// const dracoLoader = new DRACOLoader()
+// dracoLoader.setDecoderPath('./draco/')
+// const gltfLoader = new GLTFLoader(loadingManager)
+// gltfLoader.setDRACOLoader(dracoLoader)
 
 loadingManager.onLoad = () => {
-    loader.style.display = 'none'
+    requestAnimationFrame(() => {
+        loader.classList.add('fade-out')
+    })
 }
 
 /**
