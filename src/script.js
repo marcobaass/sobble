@@ -150,6 +150,24 @@ const sizes = {
     pixelRatio: Math.min(window.devicePixelRatio, 2)
 }
 
+let lookAtY = 0
+
+const applyCameraLayout = () => {
+    // Portrait layout
+    if (sizes.width < sizes.height) {
+        camera.fov = 50;
+        camera.position.set(13, - 3, - 5)
+        lookAtY = 1.5;
+        camera.updateProjectionMatrix()
+    // Landscape layout
+    } else {
+        camera.fov = 35;
+        camera.position.set(13, - 3, - 5)
+        lookAtY = 0;
+        camera.updateProjectionMatrix()
+    }
+}
+
 window.addEventListener('resize', () =>
 {
     // Update sizes
@@ -159,6 +177,7 @@ window.addEventListener('resize', () =>
 
     // Update camera
     camera.aspect = sizes.width / sizes.height
+    applyCameraLayout()
     camera.updateProjectionMatrix()
 
     // Update renderer
@@ -172,6 +191,7 @@ window.addEventListener('resize', () =>
 // Base camera
 const camera = new THREE.PerspectiveCamera(35, sizes.width / sizes.height, 0.1, 100)
 camera.position.set(13, - 3, - 5)
+applyCameraLayout()
 scene.add(camera)
 
 // Controls
@@ -228,7 +248,8 @@ const tick = () =>
 
     camera.position.x = Math.cos(angle) * radius
     camera.position.z = Math.sin(angle) * radius
-    camera.lookAt(scene.position)
+    // camera.lookAt(scene.position)
+    camera.lookAt(0, lookAtY, 0)
 
     // Render
     renderer.render(scene, camera)
